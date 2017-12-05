@@ -4,12 +4,18 @@ import "strings"
 import "unicode"
 
 func isYell(remark string) bool {
-	if strings.ToUpper(remark) == remark {
-		for _, l := range remark {
-			if unicode.IsLetter(l) {
-				return true
-			}
-		}
+	testLowercase := func(c rune) bool {
+		return unicode.IsLower(c)
+	}
+	testUppercase := func(c rune) bool {
+		return unicode.IsUpper(c)
+	}
+	if strings.IndexFunc(remark, testLowercase) >= 0 {
+		return false
+	}
+
+	if strings.IndexFunc(remark, testUppercase) >= 0 {
+		return true
 	}
 	return false
 }
