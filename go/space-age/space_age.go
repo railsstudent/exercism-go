@@ -12,5 +12,5 @@ func Age(seconds float64, planet string) float64 {
 	m["Saturn"] = 29.447498 * EarthSecPerYear
 	m["Uranus"] = 84.016846 * EarthSecPerYear
 	m["Neptune"] = 164.79132 * EarthSecPerYear
-	return float64(seconds) / m[planet]
+	return seconds / m[planet]
 }
