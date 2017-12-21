@@ -18,9 +18,7 @@ func convertHelper(hour, minute int) (int, int) {
 	}
 	adjustedMinute := totalMinutes % MINUTES
 	adjustedHour := ((totalMinutes - adjustedMinute) / MINUTES)
-	for adjustedHour >= 24 {
-		adjustedHour = adjustedHour - 24
-	}
+	adjustedHour = adjustedHour % 24
 	return adjustedHour, adjustedMinute
 }
 
