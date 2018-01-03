@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"strings"
 	"sort"
+	"strings"
 )
 
 type teamRecord struct {
-	name string
+	name  string
 	score int
 	win   int
-  draw  int
+	draw  int
 	loss  int
 }
 
@@ -24,23 +24,21 @@ func (t byScoreTeamName) Len() int {
 }
 
 func (t byScoreTeamName) Swap(i, j int) {
-    t[i], t[j] = t[j], t[i]
+	t[i], t[j] = t[j], t[i]
 }
 func (t byScoreTeamName) Less(i, j int) bool {
-		// sort by score in descending order and then team name in ascending order
-		if t[i].score < t[j].score {
-			return false
-		}
+	// sort by score in descending order and then team name in ascending order
+	if t[i].score < t[j].score {
+		return false
+	}
 
-		if t[i].score > t[j].score {
-			return true
-		}
+	if t[i].score > t[j].score {
+		return true
+	}
 
-		// same score, sort by name
-		return t[i].name < t[j].name
+	// same score, sort by name
+	return t[i].name < t[j].name
 }
-
-// https://medium.com/@matryer/golang-advent-calendar-day-seventeen-io-reader-in-depth-6f744bb4320b
 
 func Tally(reader io.Reader, writer io.Writer) error {
 	standing := make(map[string]*teamRecord)
@@ -55,17 +53,17 @@ func Tally(reader io.Reader, writer io.Writer) error {
 			continue
 		}
 		record := strings.Split(row, ";")
-		fmt.Printf("%d\n", len(record))
 		if len(record) != 3 {
-			fmt.Println("here", row)
+			fmt.Println("here 1")
 			return errors.New("Incorrect number of arguments")
 		} else {
-			fmt.Println("here 2", record)
 			firstTeamName := record[0]
 			secondTeamName := record[1]
 			outcome := record[2]
 			if outcome != "win" && outcome != "loss" && outcome != "draw" {
-				return errors.New(fmt.Sprintf("bad input: %s", outcome))
+				fmt.Println(outcome)
+				fmt.Println("here 2")
+				return errors.New("Bad input")
 			}
 
 			if _, ok := standing[firstTeamName]; !ok {
@@ -75,40 +73,36 @@ func Tally(reader io.Reader, writer io.Writer) error {
 				standing[secondTeamName] = &teamRecord{name: secondTeamName, score: 0, win: 0, draw: 0, loss: 0}
 			}
 
-      firstTeam := standing[firstTeamName]
-      secondTeam := standing[secondTeamName]
-      switch outcome {
+			firstTeam := standing[firstTeamName]
+			secondTeam := standing[secondTeamName]
+			switch outcome {
 			case "win":
-	      firstTeam.win += 1
-        firstTeam.score += 3
-        secondTeam.loss += 1
+				firstTeam.win += 1
+				firstTeam.score += 3
+				secondTeam.loss += 1
 			case "draw":
-        firstTeam.draw++
-        firstTeam.score += 1
-        secondTeam.draw++
-        secondTeam.score += 1
+				firstTeam.draw++
+				firstTeam.score += 1
+				secondTeam.draw++
+				secondTeam.score += 1
 			case "loss":
-        firstTeam.loss++
-        secondTeam.win++
-        secondTeam.score += 3
+				firstTeam.loss++
+				secondTeam.win++
+				secondTeam.score += 3
 			}
 		}
 	}
 
 	var teamArray byScoreTeamName
-
 	for _, v := range standing {
 		teamArray = append(teamArray, *v)
-  }
+	}
 	sort.Sort(byScoreTeamName(teamArray))
-//	fmt.Println(teamArray)
 
-	output := fmt.Sprintf("%-31s|%4s|%4s|%4s|%4s|%3s\n", "Team", " MP ", "  W " , "  D ", "  L ", "  P")
+	output := fmt.Sprintf("%-31s|%4s|%4s|%4s|%4s|%3s\n", "Team", " MP ", "  W ", "  D ", "  L ", "  P")
 	for _, v := range teamArray {
-    output += fmt.Sprintf("%-31s|  %d |  %d |  %d |  %d |  %d\n", v.name, (v.win+v.loss+v.draw), v.win, v.draw, v.loss, v.score)
-  }
-	//output += "\n"
-	//fmt.Printf("%s", output)
+		output += fmt.Sprintf("%-31s|  %d |  %d |  %d |  %d |  %d\n", v.name, (v.win + v.loss + v.draw), v.win, v.draw, v.loss, v.score)
+	}
 	fmt.Fprint(writer, output)
 	return nil
 }
