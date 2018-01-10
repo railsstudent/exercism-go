@@ -1,38 +1,92 @@
 package matrix
 
-import "fmt"
-import "strings"
+import (
+	"errors"
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 type Matrix struct {
 	rows [][]int
 	cols [][]int
 }
 
-func New(strMatrix string) (*Matrix, error) {
+func validate(strMatrix string) (int, int, error) {
 	strRows := strings.Split(strMatrix, "\n")
-	rows := [][]int{}
-	for _, strRow := range strRows {
-		elements := strings.Split(strRow, " ")
-		for _, e := range elements {
-			fmt.Println(int(e))
+	numRows := len(strRows)
+	numCols := len(strings.Split(strings.TrimSpace(strRows[0]), " "))
+	for i := 1; i < numRows; i++ {
+		if len(strings.Split(strings.TrimSpace(strRows[i]), " ")) != numCols {
+			return -1, -1, errors.New("Invalid matrix, rows have different number of columns")
 		}
 	}
+	return numRows, numCols, nil
+}
 
-	fmt.Println(strMatrix)
-	fmt.Println()
+// New
+func New(strMatrix string) (*Matrix, error) {
+	var rows [][]int
+	var cols [][]int
+	var row []int
 
-	m := &Matrix{rows: [][]int{[]int{1}}, cols: [][]int{}}
+	_, numCols, invalidMatrix := validate(strMatrix)
+	if invalidMatrix != nil {
+		return nil, invalidMatrix
+	}
+
+	strRows := strings.Split(strMatrix, "\n")
+	for i := 0; i < numCols; i++ {
+		cols = append(cols, []int{})
+	}
+	for _, strRow := range strRows {
+		row = []int{}
+		strRow = strings.TrimSpace(strRow)
+		for i, strNum := range strings.Split(strRow, " ") {
+			n, err := strconv.Atoi(strNum)
+			if err != nil {
+				return nil, err
+			}
+			row = append(row, n)
+			cols[i] = append(cols[i], n)
+		}
+		rows = append(rows, row)
+	}
+	m := &Matrix{rows, cols}
 	return m, nil
 }
 
+// Cols returns a copy of matrix's columns
 func (m *Matrix) Cols() [][]int {
-	return [][]int{}
+	copiedCols := [][]int{}
+	for i, colSlice := range m.cols {
+		copiedCols = append(copiedCols, []int{})
+		for _, colValue := range colSlice {
+			copiedCols[i] = append(copiedCols[i], colValue)
+		}
+	}
+	return copiedCols
 }
 
+// Rows returns a copy of matrix's rows
 func (m *Matrix) Rows() [][]int {
-	return [][]int{}
+	copiedRows := [][]int{}
+	for i, origRow := range m.rows {
+		copiedRows = append(copiedRows, []int{})
+		for _, rowValue := range origRow {
+			copiedRows[i] = append(copiedRows[i], rowValue)
+		}
+	}
+	return copiedRows
 }
 
-func (m *Matrix) Set(r int, col int, val int) bool {
+// Set updates matrix value, return true if row index and col index are valid, false otherwise
+func (m *Matrix) Set(r int, c int, val int) bool {
+	fmt.Println(m, r, c, val, len(m.rows), len(m.cols))
+	if r >= 0 && r < len(m.rows) && c >= 0 && c < len(m.cols) {
+		m.rows[r][c] = val
+		m.cols[c][r] = val
+		return true
+	}
 	return false
 }
