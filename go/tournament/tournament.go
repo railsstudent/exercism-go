@@ -54,42 +54,39 @@ func Tally(reader io.Reader, writer io.Writer) error {
 		}
 		record := strings.Split(row, ";")
 		if len(record) != 3 {
-			fmt.Println("here 1")
 			return errors.New("Incorrect number of arguments")
-		} else {
-			firstTeamName := record[0]
-			secondTeamName := record[1]
-			outcome := record[2]
-			if outcome != "win" && outcome != "loss" && outcome != "draw" {
-				fmt.Println(outcome)
-				fmt.Println("here 2")
-				return errors.New("Bad input")
-			}
+		}
 
-			if _, ok := standing[firstTeamName]; !ok {
-				standing[firstTeamName] = &teamRecord{name: firstTeamName, score: 0, win: 0, draw: 0, loss: 0}
-			}
-			if _, ok2 := standing[secondTeamName]; !ok2 {
-				standing[secondTeamName] = &teamRecord{name: secondTeamName, score: 0, win: 0, draw: 0, loss: 0}
-			}
+		firstTeamName := record[0]
+		secondTeamName := record[1]
+		outcome := record[2]
+		if outcome != "win" && outcome != "loss" && outcome != "draw" {
+			return errors.New("Bad input")
+		}
 
-			firstTeam := standing[firstTeamName]
-			secondTeam := standing[secondTeamName]
-			switch outcome {
-			case "win":
-				firstTeam.win += 1
-				firstTeam.score += 3
-				secondTeam.loss += 1
-			case "draw":
-				firstTeam.draw++
-				firstTeam.score += 1
-				secondTeam.draw++
-				secondTeam.score += 1
-			case "loss":
-				firstTeam.loss++
-				secondTeam.win++
-				secondTeam.score += 3
-			}
+		if _, ok := standing[firstTeamName]; !ok {
+			standing[firstTeamName] = &teamRecord{name: firstTeamName, score: 0, win: 0, draw: 0, loss: 0}
+		}
+		if _, ok2 := standing[secondTeamName]; !ok2 {
+			standing[secondTeamName] = &teamRecord{name: secondTeamName, score: 0, win: 0, draw: 0, loss: 0}
+		}
+
+		firstTeam := standing[firstTeamName]
+		secondTeam := standing[secondTeamName]
+		switch outcome {
+		case "win":
+			firstTeam.win += 1
+			firstTeam.score += 3
+			secondTeam.loss += 1
+		case "draw":
+			firstTeam.draw++
+			firstTeam.score += 1
+			secondTeam.draw++
+			secondTeam.score += 1
+		case "loss":
+			firstTeam.loss++
+			secondTeam.win++
+			secondTeam.score += 3
 		}
 	}
 
