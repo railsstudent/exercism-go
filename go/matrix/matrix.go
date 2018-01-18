@@ -2,7 +2,6 @@ package matrix
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -82,7 +81,6 @@ func (m *Matrix) Rows() [][]int {
 
 // Set updates matrix value, return true if row index and col index are valid, false otherwise
 func (m *Matrix) Set(r int, c int, val int) bool {
-	fmt.Println(m, r, c, val, len(m.rows), len(m.cols))
 	if r >= 0 && r < len(m.rows) && c >= 0 && c < len(m.cols) {
 		m.rows[r][c] = val
 		m.cols[c][r] = val
