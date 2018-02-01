@@ -35,9 +35,7 @@ func New(strMatrix string) (*Matrix, error) {
 	}
 
 	strRows := strings.Split(strMatrix, "\n")
-	for i := 0; i < numCols; i++ {
-		cols = append(cols, []int{})
-	}
+	cols = make([][]int, numCols)
 	for _, strRow := range strRows {
 		row = []int{}
 		strRow = strings.TrimSpace(strRow)
