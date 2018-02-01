@@ -57,9 +57,8 @@ func New(strMatrix string) (*Matrix, error) {
 
 // Cols returns a copy of matrix's columns
 func (m *Matrix) Cols() [][]int {
-	copiedCols := [][]int{}
+	copiedCols := make([][]int, len(m.cols))
 	for i, colSlice := range m.cols {
-		copiedCols = append(copiedCols, []int{})
 		for _, colValue := range colSlice {
 			copiedCols[i] = append(copiedCols[i], colValue)
 		}
@@ -69,9 +68,8 @@ func (m *Matrix) Cols() [][]int {
 
 // Rows returns a copy of matrix's rows
 func (m *Matrix) Rows() [][]int {
-	copiedRows := [][]int{}
+	copiedRows := make([][]int, len(m.rows))
 	for i, origRow := range m.rows {
-		copiedRows = append(copiedRows, []int{})
 		for _, rowValue := range origRow {
 			copiedRows[i] = append(copiedRows[i], rowValue)
 		}
